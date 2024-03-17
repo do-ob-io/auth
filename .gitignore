@@ -1,3 +1,8 @@
+# Artifacts
+build/
+dist/
+types/
+
 # Logs
 logs
 *.log
@@ -128,3 +133,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignore OSX system files
+.DS_Store
+.AppleDouble
+.LSOverride

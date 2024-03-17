@@ -1,0 +1,34 @@
+{
+  "name": "@do-ob/crypto",
+  "version": "0.0.0",
+  "description": "Common cross-platform pre-configured cryptography methods using Node.js and Web Crypto API",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "keywords": [
+    "crypto",
+    "typescript",
+    "library",
+    "esm",
+    "configured",
+    "simplified"
+  ],
+  "author": "Eric Crowell <eric@do-ob.io> (https://do-ob.io)",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm run build:dist && pnpm run build:types",
+    "build:dist": "vite build --mode production",
+    "build:types": "tsc -p tsconfig.build.json"
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "extends": "@do-ob/ts-config",
+    "compilerOptions": {
+      "declarationDir": "./types",
+    },
+    "include": [
+      "src/**/*",
+      "vite.config.ts"
+    ]
+}

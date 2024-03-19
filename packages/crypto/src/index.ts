@@ -1,1 +1,3 @@
-export const Crypto: Record<string, string> = {};
+import { webcrypto } from '@do-ob/crypto/webcrypto';
+
+export { webcrypto };

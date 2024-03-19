@@ -10,10 +10,14 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "resolutions": {
+    "@microsoft/api-extractor": "^7"
+  },
   "devDependencies": {
     "@do-ob/eslint-config": "^1.1.0",
     "@do-ob/ts-config": "^1.1.0",
-    "@do-ob/vite-lib-config": "^1.0.0",
+    "@do-ob/vite-lib-config": "^2.0.4",
+    "@types/node": "^20.11.30",
     "eslint": "^8.57.0",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",

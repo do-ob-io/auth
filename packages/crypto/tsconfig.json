@@ -2,6 +2,11 @@
     "extends": "@do-ob/ts-config",
     "compilerOptions": {
       "declarationDir": "./types",
+      "baseUrl": ".",
+      "paths": {
+        "@do-ob/crypto": ["src/index.ts"],
+        "@do-ob/crypto/*": ["src/*.ts"]
+      }
     },
     "include": [
       "src/**/*",

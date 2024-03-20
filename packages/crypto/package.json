@@ -32,7 +32,9 @@
   "author": "Eric Crowell <eric@do-ob.io> (https://do-ob.io)",
   "license": "MIT",
   "scripts": {
-    "test": "vitest --run",
+    "test": "pnpm run test:node && pnpm run test:browser",
+    "test:node": "vitest --run",
+    "test:browser": "vitest --run --browser.name=chrome --browser.headless",
     "build": "vite build --mode production"
   }
 }

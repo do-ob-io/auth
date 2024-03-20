@@ -18,9 +18,11 @@
     "@do-ob/ts-config": "^1.1.0",
     "@do-ob/vite-lib-config": "^2.0.4",
     "@types/node": "^20.11.30",
+    "@vitest/browser": "^1.4.0",
     "eslint": "^8.57.0",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
-    "vitest": "^1.4.0"
+    "vitest": "^1.4.0",
+    "webdriverio": "^8.34.1"
   }
 }

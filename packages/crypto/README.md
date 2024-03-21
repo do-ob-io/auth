@@ -28,7 +28,7 @@ pnpm add @do-ob/crypto
 
 ## WebCrypto Usage
 
-How to import the cross-platform Web Crypto object.
+Import the cross-platform Web Crypto object.
 
 For documentation on the Web Crypto API, see [MDN Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API).
 
@@ -44,7 +44,7 @@ import { webcrypto } from '@do-ob/crypto';
 
 ## Encoding Modules
 
-The library also includes a set of encoding modules that can be used to encode and decode data.
+The library includes a set of modules that can be used to encode and decode data for transit or other uses.
 
 ### Base64
 
@@ -133,6 +133,11 @@ const encrypted = await sym.encrypt('Hello, World!', key);
  * If a key is not provided, a singlton key for this runtime instance will be used.
  */
 const decrypted = await sym.decrypt(encrypted, key);
+/**
+ * decrypted = 'Hello, World!'
+ * 
+ * If the data cannot be decrypted, the method will return undefined.
+ */
 ```
 
 ### Asymmetric Encryption
@@ -158,6 +163,11 @@ const encrypted = await asym.encrypt('Hello, World!', encryptorKeyPair.publicKey
  * If a private key is not provided, a key from the singlton key pair for this runtime instance will be used.
  */
 const decrypted = await asym.decrypt(encrypted, encryptorKeyPair.privateKey);
+/**
+ * decrypted = 'Hello, World!'
+ * 
+ * If the data cannot be decrypted, the method will return undefined.
+ */
 ```
 
 ### Asymmetric Signatures
@@ -183,4 +193,109 @@ const signature = await asym.sign('Hello, World!', signerKeyPair.privateKey);
  * If a public key is not provided, a key from the singlton key pair for this runtime instance will be used.
  */
 const verified = await asym.verify('Hello, World!', signature, signerKeyPair.publicKey);
+/**
+ * verified = true
+ * 
+ * If the data cannot be verified, the method will return false.
+ */
+```
+
+### Key Management
+
+The library includes a key management module that can be used to export or wrap keys.
+
+#### Exporting and Importing Keys
+
+```typescript
+import { key } from '@do-ob/crypto/encrypt';
+
+// Generate a new symetric key.
+const newSymKey = await sym.generate();
+// Generate a new asymetric encryptor key.
+const newAsymEncryptorKey = await asym.generate('encryptor');
+// Generate a new asymetric signer key.
+const newAsymSignerKey = await asym.generate('signer');
+
+// Export the keys, returning a base64 encoded JWK (a string).
+const jwkSym = await key.export(newSymKey, 'symEncryptor');
+const jwkAsymEncryptor = await key.export(newAsymEncryptorKey, 'asymEncryptor');
+const jwkAsymSigner = await key.export(newAsymSignerKey, 'asymSigner');
+
+// Import the keys back into a CryptoKey object.
+const importedSymKey = await key.import(jwkSym);
+const importedAsymEncryptorKey = await key.import(jwkAsymEncryptor);
+const importedAsymSignerKey = await key.import(jwkAsymSigner);
+```
+
+#### Wrapping and Unwrapping Keys
+
+```typescript
+import { key } from '@do-ob/crypto/encrypt';
+
+// Generate a new symetric key.
+const newSymKey = await sym.generate();
+// Generate a new asymetric encryptor key.
+const newAsymEncryptorKey = await asym.generate('encryptor');
+// Generate a new asymetric signer key.
+const newAsymSignerKey = await asym.generate('signer');
+
+// Wrap the keys with a password, returning a base64 encoded JWK (a string).
+const wrappedSymKey = await key.wrap(newSymKey, 'MyPassword', 'symEncryptor');
+const wrappedAsymEncryptorKey = await key.wrap(newAsymEncryptorKey, 'MyPassword', 'asymEncryptor');
+const wrappedAsymSignerKey = await key.wrap(newAsymSignerKey, 'MyPassword', 'asymSigner');
+
+// Unwrap the keys with the password.
+const unwrappedSymKey = await key.unwrap(wrappedSym, 'MyPassword');
+const unwrappedAsymEncryptorKey = await key.unwrap(wrappedAsymEncryptorKey, 'MyPassword');
+const unwrappedAsymSignerKey = await key.unwrap(wrappedAsymSignerKey, 'MyPassword');
+```
+
+### JWT Tokens
+
+The library includes a module that can be used to create and verify JWT tokens.
+
+```typescript
+import { token } from '@do-ob/crypto/encrypt';
+
+// Generate a new asymetric key pair for signing and verification.
+const signerKeyPair = await asym.generate('signer');
+
+// Create a new JWT token.
+const jwt = await token.sign({ hello: 'world' }, signerKeyPair.privateKey);
+
+// Verify a JWT token.
+const verified = await token.verify(jwt, signerKeyPair.publicKey);
+/**
+ * verified = { hello: 'world' }
+ * 
+ * If the token cannot be verified, the method will return an error code.
+ */
+switch (verified) {
+  case token.TokenError.InvalidFormat:
+    // Token is poorly formatted.
+    break;
+  case token.TokenError.InvalidHeader:
+    // Token header is invalid.
+    break;
+  case token.TokenError.InvalidPayload:
+    // Token payload is invalid.
+    break;
+  case token.TokenError.InvalidSignature:
+    // Token signature is invalid.
+    break;
+  case token.TokenError.Expired:
+    // Token has expired.
+    break;
+  case token.TokenError.CantParse:
+    // Token's JSON cannot be parsed.
+    break;
+}
+
+// Can also decode a JWT token without verifying it.
+const decoded = token.decode(jwt);
+/**
+ * decoded = { hello: 'world' }
+ * 
+ * If the token cannot be decoded, the method will also return token.TokenError error code.
+ */
 ```

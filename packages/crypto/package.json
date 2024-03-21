@@ -6,6 +6,25 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/do-ob-io/auth"
+  },
+  "homepage": "https://github.com/do-ob-io/auth",
+  "keywords": [
+    "crypto",
+    "webcrypto",
+    "typescript",
+    "library",
+    "esm",
+    "configured",
+    "simplified",
+    "utility",
+    "cross-platform"
+  ],
   "exports": {
     ".": {
       "default": "./dist/index.js",
@@ -17,18 +36,6 @@
     },
     "./index": null
   },
-  "files": [
-    "dist",
-    "types"
-  ],
-  "keywords": [
-    "crypto",
-    "typescript",
-    "library",
-    "esm",
-    "configured",
-    "simplified"
-  ],
   "author": "Eric Crowell <eric@do-ob.io> (https://do-ob.io)",
   "license": "MIT",
   "scripts": {

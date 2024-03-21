@@ -39,18 +39,26 @@ export async function sign(
   return `${dataString}.${signatureBase64}`;
 }
 
+export enum TokenError {
+  InvalidFormat,
+  InvalidHeader,
+  InvalidPayload,
+  InvalidSignature,
+  Expired,
+  CantParse,
+}
+
 /**
  * Verify a JWT and return the payload if it is valid.
  */
-export async function verify(
+export async function verify<T = Record<string, unknown>>(
   encoded: string,
   publicKey?: CryptoKey,
-) {
+): Promise<T | TokenError>{
   const [headerB64, payloadB64, signatureB64] = encoded.split('.');
 
   if (!signatureB64 || !payloadB64 || !headerB64) {
-    // console.warn('Token is not properly formatted');
-    return undefined;
+    return TokenError.InvalidFormat;
   }
 
   try {
@@ -69,57 +77,58 @@ export async function verify(
     );
 
     if (header.typ !== 'JWT') {
-      // console.warn('Header is not formatted correctly');
-      return undefined;
+      return TokenError.InvalidHeader;
     }
 
     if (!verified) {
-      // console.warn('Could not verify token');
-      return undefined;
+      return TokenError.InvalidSignature;
     }
 
     if (!payload.exp || payload.exp <= now) {
-      // console.warn('Token has expired');
-      return undefined;
+      return TokenError.Expired;
     }
 
     return payload;
   } catch (error) {
-    // console.error('Failed to parse token');
-    return undefined;
+    return TokenError.CantParse;
   }
 }
 
-export type TokenDecoded<T = Record<string, unknown>> = [
-  payload: T,
+export type TokenDecoded<T = Record<string, unknown>> = {
+  payload?: T,
   raw: string,
-  signature: ArrayBuffer,
-];
+  signature?: ArrayBuffer,
+  error?: TokenError,
+};
 
 /**
- * Decode a JWT and return the payload if it is valid.
+ * Decode a JWT and return the payload WITHOUT validation.
  */
 export async function decode<T = Record<string, unknown>>(
   encoded: string,
-): Promise<TokenDecoded<T> | []> {
+): Promise<TokenDecoded<T>> {
   const [headerB64, payloadB64, signatureB64] = encoded.split('.');
 
   if (!signatureB64 || !payloadB64 || !headerB64) {
-    // console.warn('Token is not properly formatted');
-    return [];
+    return {
+      raw: encoded,
+      error: TokenError.InvalidFormat,
+    };
   }
 
   try {
     const payload = base64.decodeJson(payloadB64) as T;
     const sigature = base64.decode(signatureB64);
 
-    if (!payload) {
-      return [];
-    }
-
-    return [payload, `${headerB64}.${payloadB64}`, sigature.buffer];
+    return {
+      payload,
+      raw: `${headerB64}.${payloadB64}`,
+      signature: sigature.buffer,
+    };
   } catch (error) {
-    // console.error('Failed to parse token');
-    return [];
+    return {
+      raw: encoded,
+      error: TokenError.CantParse
+    };
   }
 }

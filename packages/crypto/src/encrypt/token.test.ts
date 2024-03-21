@@ -1,6 +1,7 @@
 import { test, expect } from 'vitest';
 import * as asym from './asym.js';
 import { decode, sign, verify } from './token.js';
+import { token } from './index.ts';
 
 /**
  * Create a numeric date value. Needed typically for bearers.
@@ -60,7 +61,7 @@ test('should create a new json web token and NOT verify it with different privat
   const tokenSigned = await sign(payload, keyPair.privateKey);
   const tokenVerified = await verify(tokenSigned);
 
-  expect(tokenVerified).toBeUndefined();
+  expect(tokenVerified).toEqual(token.TokenError.InvalidSignature);
 });
 
 test('should create a new json web token and NOT verify it with different public key', async () => {
@@ -68,19 +69,20 @@ test('should create a new json web token and NOT verify it with different public
   const tokenSigned = await sign(payload);
   const tokenVerified = await verify(tokenSigned, keyPair.publicKey);
 
-  expect(tokenVerified).toBeUndefined();
+  expect(tokenVerified).toEqual(token.TokenError.InvalidSignature);
 });
 
 test('should create a new json web token, decode it, then verify the decoded data', async () => {
   const tokenSigned = await sign(payload);
-  const [tokenDecoded, tokenRaw, tokenSignature] = await decode(tokenSigned);
+  const tokenDecoded = await decode(tokenSigned);
 
-  if (!tokenDecoded || !tokenRaw || !tokenSignature) {
+  if (!tokenDecoded.payload || !tokenDecoded.raw || !tokenDecoded.signature) {
     expect(tokenDecoded).toBeDefined();
-    expect(tokenRaw).toBeDefined();
-    expect(tokenSignature).toBeDefined();
+    expect(tokenDecoded.payload).toBeDefined();
+    expect(tokenDecoded.raw).toBeDefined();
+    expect(tokenDecoded.signature).toBeDefined();
     return;
   }
-  const verified = await asym.verify(tokenRaw, tokenSignature);
+  const verified = await asym.verify(tokenDecoded.raw, tokenDecoded.signature);
   expect(verified).toBe(true);
 });

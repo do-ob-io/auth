@@ -4,7 +4,7 @@ import { webcrypto } from '@do-ob/crypto/webcrypto';
 /**
  * Generate a new AES-GCM key.
  */
-export async function generate () {
+export async function generate() {
   const wc = await webcrypto();
   const key = await wc.subtle.generateKey(
     {

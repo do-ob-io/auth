@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/do-ob-io/auth"
   },
-  "homepage": "https://github.com/do-ob-io/auth",
+  "homepage": "https://github.com/do-ob-io/auth/tree/main/packages/crypto",
   "keywords": [
     "crypto",
     "webcrypto",
@@ -21,9 +21,11 @@
     "library",
     "esm",
     "configured",
+    "pre-configured",
     "simplified",
     "utility",
-    "cross-platform"
+    "cross-platform",
+    "methods"
   ],
   "exports": {
     ".": {

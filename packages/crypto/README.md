@@ -38,7 +38,7 @@ import { webcrypto } from '@do-ob/crypto';
 (async () => {
   const wc = await webcrypto();
 
-  // Use the webcrypto API
+  // Use the native webcrypto API
 })();
 ```
 
@@ -260,8 +260,11 @@ import { token } from '@do-ob/crypto/encrypt';
 // Generate a new asymetric key pair for signing and verification.
 const signerKeyPair = await asym.generate('signer');
 
+// Create a numeric date to set the expiration for 30 minutes from now.
+const exp = Date.now() + 1800000;
+
 // Create a new JWT token.
-const jwt = await token.sign({ hello: 'world' }, signerKeyPair.privateKey);
+const jwt = await token.sign({ hello: 'world', exp }, signerKeyPair.privateKey);
 
 // Verify a JWT token.
 const verified = await token.verify(jwt, signerKeyPair.publicKey);
@@ -299,3 +302,54 @@ const decoded = token.decode(jwt);
  * If the token cannot be decoded, the method will also return token.TokenError error code.
  */
 ```
+
+### Sessions
+
+The library includes a module that can be used to create and verify session encryptions.
+
+For the web, these sessions should only be stored in a secure HttpOnly cookie.
+
+```typescript
+import { session } from '@do-ob/crypto/encrypt';
+
+// Generate a new symetric key.
+const newSymKey = await sym.generate();
+
+// Create a numeric date to set the expiration for 1 day from now.
+const exp = Date.now() + 86400000;
+
+// Encrypt a new session.
+const session = await session.encrypt({ hello: 'world', exp }, newSymKey);
+
+// Decrypt a session.
+const decrypted = await session.decrypt(session, newSymKey);
+
+/**
+ * decrypted = { hello: 'world' }
+ * 
+ * If the session cannot be decrypted, the method will return a SessionError.
+ */
+switch (decrypted) {
+  case session.SessionError.DecryptionFailed:
+    // Session is could not be decrypted.
+    break;
+  case session.SessionError.Expired:
+    // Session has expired.
+    break;
+  case session.SessionError.CantParse:
+    // Session's JSON cannot be parsed.
+    break;
+}
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
+
+## References
+
+- [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)
+- [RFC 7515 - JSON Web Signature (JWS)](https://tools.ietf.org/html/rfc7515)
+- [RFC 7519 - JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519)
+- [RFC 7516 - JSON Web Encryption (JWE)](https://tools.ietf.org/html/rfc7516)
+- [RFC 7518 - JSON Web Algorithms (JWA)](https://tools.ietf.org/html/rfc7518)

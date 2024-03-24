@@ -1,8 +1,10 @@
 {
   "name": "workspace",
+  "private": true,
   "version": "0.0.0",
   "description": "Workspace for authentication and authorization packages",
   "scripts": {
+    "apps:webauthn": "pnpm --filter './apps/webauthn' dev",
     "lint": "pnpm --filter './packages/**' lint",
     "test": "pnpm --filter './packages/**' test",
     "build": "pnpm --filter './packages/**' build"
@@ -18,8 +20,15 @@
     "@do-ob/ts-config": "^1.1.0",
     "@do-ob/vite-lib-config": "^2.0.4",
     "@types/node": "^20.11.30",
+    "@types/react": "^18.2.69",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "@vitest/browser": "^1.4.0",
     "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "react": "18.3.0-canary-670811593-20240322",
+    "react-dom": "18.3.0-canary-670811593-20240322",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
     "vitest": "^1.4.0",

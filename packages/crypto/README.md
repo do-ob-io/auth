@@ -349,6 +349,7 @@ This project is licensed under the MIT License - see the [LICENSE](/LICENSE) fil
 ## References
 
 - [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)
+- [COSE Header Algorithm Parameters](https://www.iana.org/assignments/cose/cose.xhtml#algorithms)
 - [RFC 7515 - JSON Web Signature (JWS)](https://tools.ietf.org/html/rfc7515)
 - [RFC 7519 - JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519)
 - [RFC 7516 - JSON Web Encryption (JWE)](https://tools.ietf.org/html/rfc7516)

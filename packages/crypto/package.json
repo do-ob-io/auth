@@ -45,5 +45,8 @@
     "test:node": "vitest --run",
     "test:browser": "vitest --run --browser.name=chrome --browser.headless",
     "build": "vite build --mode production"
+  },
+  "dependencies": {
+    "@do-ob/crypto": "workspace:*"
   }
 }

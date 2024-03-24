@@ -30,7 +30,7 @@ const dateNumeric = (date?: Date | string) => {
 };
 
 const payload = {
-  exp: dateNumeric('1h') / 1000,
+  exp: dateNumeric('1h'),
   msg: 'Hello World',
 };
 
@@ -51,8 +51,9 @@ test('should create a new json web token and verify it', async () => {
 
   expect(tokenVerified).toBeDefined();
   expect(tokenVerified).toEqual({
-    iat: expect.any(Number),
     ...payload,
+    exp: Math.floor(payload.exp / 1000),
+    iat: expect.any(Number),
   });
 });
 

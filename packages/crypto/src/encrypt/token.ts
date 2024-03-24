@@ -2,14 +2,35 @@ import * as asym from './asym.js';
 import { base64 } from '@do-ob/crypto/encode';
 // import { webcrypto } from '../webcrypto.js';
 
+export type Token = {
+  [key: string]: unknown,
+
+  /**
+   * Issued at time.
+   */
+  iat: number,
+
+  /**
+   * Expiration time.
+   */
+  exp: number,
+}
+
+export type TokenBody = Omit<Token, 'iat' | 'exp'> & { exp?: number };
+
+export type TokenHeader = {
+  alg: 'ES256',
+  typ: 'JWT'
+}
+
 /**
  * Sign a JSON object and return a JWT.
  */
-export async function sign(
-  json: Record<string, unknown>,
+export async function sign<T extends TokenBody = TokenBody>(
+  json: T,
   privateKey?: CryptoKey,
 ) {
-  const header = {
+  const header: TokenHeader = {
     /**
      * Algorithm used to sign the token.
      * ES256 = ECDSA using P-256 and SHA-256
@@ -20,12 +41,13 @@ export async function sign(
     typ: 'JWT',
   };
 
-  const now = new Date().getTime() / 1000;
+  const now = new Date().getTime();
+  const nowMins = Math.floor(now / 1000);
 
-  const payload = {
-    iat: now,
-    exp: now,
+  const payload: Token = {
     ...json,
+    iat: nowMins,
+    exp: json.exp ? Math.floor(json.exp / 1000) : nowMins,
   };
 
   const headerBase64 = base64.encodeJson(header);
@@ -51,10 +73,10 @@ export enum TokenError {
 /**
  * Verify a JWT and return the payload if it is valid.
  */
-export async function verify<T = Record<string, unknown>>(
+export async function verify<T extends Record<string, unknown> = Record<string, unknown>>(
   encoded: string,
   publicKey?: CryptoKey,
-): Promise<T | TokenError>{
+): Promise<T & Token | TokenError>{
   const [headerB64, payloadB64, signatureB64] = encoded.split('.');
 
   if (!signatureB64 || !payloadB64 || !headerB64) {
@@ -96,17 +118,18 @@ export async function verify<T = Record<string, unknown>>(
 
 export type TokenDecoded<T = Record<string, unknown>> = {
   payload?: T,
+  header?: TokenHeader,
   raw: string,
   signature?: ArrayBuffer,
   error?: TokenError,
 };
 
 /**
- * Decode a JWT and return the payload WITHOUT validation.
+ * Decode the parts of the JWT token and return the values WITHOUT validation.
  */
-export async function decode<T = Record<string, unknown>>(
+export async function decode<T extends Record<string, unknown> = Record<string, unknown>>(
   encoded: string,
-): Promise<TokenDecoded<T>> {
+): Promise<TokenDecoded<T & Token>> {
   const [headerB64, payloadB64, signatureB64] = encoded.split('.');
 
   if (!signatureB64 || !payloadB64 || !headerB64) {
@@ -117,11 +140,13 @@ export async function decode<T = Record<string, unknown>>(
   }
 
   try {
-    const payload = base64.decodeJson(payloadB64) as T;
+    const header = base64.decodeJson(headerB64) as TokenHeader;
+    const payload = base64.decodeJson(payloadB64) as T & Token;
     const sigature = base64.decode(signatureB64);
 
     return {
       payload,
+      header,
       raw: `${headerB64}.${payloadB64}`,
       signature: sigature.buffer,
     };

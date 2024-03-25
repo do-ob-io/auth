@@ -18,7 +18,7 @@
   "devDependencies": {
     "@do-ob/eslint-config": "^1.1.0",
     "@do-ob/ts-config": "^1.1.0",
-    "@do-ob/vite-lib-config": "^2.0.4",
+    "@do-ob/vite-lib-config": "^2.1.0",
     "@types/node": "^20.11.30",
     "@types/react": "^18.2.69",
     "@types/react-dom": "^18.2.22",

@@ -77,7 +77,10 @@ export async function verify<T extends Record<string, unknown> = Record<string, 
   encoded: string,
   publicKey?: CryptoKey,
 ): Promise<T & Token | TokenError>{
-  const [headerB64, payloadB64, signatureB64] = encoded.split('.');
+  const encodings = encoded.split('.');
+  const headerB64 = encodings[0];
+  const payloadB64 = encodings[1];
+  const signatureB64 = encodings[2];
 
   if (!signatureB64 || !payloadB64 || !headerB64) {
     return TokenError.InvalidFormat;
@@ -130,7 +133,10 @@ export type TokenDecoded<T = Record<string, unknown>> = {
 export async function decode<T extends Record<string, unknown> = Record<string, unknown>>(
   encoded: string,
 ): Promise<TokenDecoded<T & Token>> {
-  const [headerB64, payloadB64, signatureB64] = encoded.split('.');
+  const encodings = encoded.split('.');
+  const headerB64 = encodings[0];
+  const payloadB64 = encodings[1];
+  const signatureB64 = encodings[2];
 
   if (!signatureB64 || !payloadB64 || !headerB64) {
     return {

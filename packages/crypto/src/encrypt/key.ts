@@ -89,7 +89,7 @@ export async function unwrap(
     const salt = wrapped.slice(1, saltLength + 1);
     const iv = wrapped.slice(saltLength + 1, saltLength + ivLength + 1);
 
-    const [algorithm, usage] = ((t) => {
+    const result = ((t) => {
       switch (t) {
       case 0:
         return [
@@ -119,6 +119,9 @@ export async function unwrap(
         ];
       }
     })(type);
+
+    const algorithm = result[0] as Parameters<Crypto['subtle']['unwrapKey']>[4];
+    const usage = result[1] as Parameters<Crypto['subtle']['unwrapKey']>[6];
 
     const unwrappingKey = await wc.subtle.deriveKey(
       {
@@ -191,7 +194,7 @@ export async function importer(
     const jsonString = dec.decode(encoded);
     const jwk = JSON.parse(jsonString) as JsonWebKey;
 
-    const [algorithm, usage] = ((t) => {
+    const result = ((t) => {
       switch (t) {
       case 0:
         return [
@@ -221,6 +224,9 @@ export async function importer(
         ];
       }
     })(type);
+
+    const algorithm = result[0] as AlgorithmIdentifier;
+    const usage = result[1] as ReadonlyArray<KeyUsage>;
 
     const key = await wc.subtle.importKey(
       'jwk',

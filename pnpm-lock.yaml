@@ -18,8 +18,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(typescript@5.4.2)
       '@do-ob/vite-lib-config':
-        specifier: ^2.0.4
-        version: 2.0.4(@types/node@20.11.30)(typescript@5.4.2)(vite@5.1.6)
+        specifier: ^2.1.0
+        version: 2.1.0(@types/node@20.11.30)(typescript@5.4.2)(vite@5.1.6)
       '@types/node':
         specifier: ^20.11.30
         version: 20.11.30
@@ -135,8 +135,8 @@ packages:
       typescript: 5.4.2
     dev: true
 
-  /@do-ob/vite-lib-config@2.0.4(@types/node@20.11.30)(typescript@5.4.2)(vite@5.1.6):
-    resolution: {integrity: sha512-J90NVpGz9BozC7EBILIQhSEqDD0VNFXuIJM53Q2+tZW1yqX2K6woBTRxK6Pb6QPbLExAnSEtqpE0o/gH6E7Rfg==}
+  /@do-ob/vite-lib-config@2.1.0(@types/node@20.11.30)(typescript@5.4.2)(vite@5.1.6):
+    resolution: {integrity: sha512-YYnSrl/4t5eA+axKM0ChMerFPUMOHJSn3y4BDphpYqrr+6JJ4Pg/wzsfDkHRa+r1HfnSV6Hk4rJkiV3dFL6QCA==}
     peerDependencies:
       vite: ^5
     dependencies:

@@ -1,10 +1,5 @@
 import { webcrypto } from '@do-ob/crypto/webcrypto';
 
-export type CryptoKeyPair = {
-  privateKey: CryptoKey;
-  publicKey: CryptoKey;
-};
-
 export type CryptoAsymType = 'encryptor' | 'signer';
 
 /**

@@ -4,6 +4,7 @@ import {
   key,
   sym,
   token,
+  session,
 } from './encrypt/index.ts';
 
 export {
@@ -12,4 +13,5 @@ export {
   key,
   sym,
   token,
+  session,
 };

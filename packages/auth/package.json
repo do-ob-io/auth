@@ -11,10 +11,10 @@
       "require": "./dist/index.cjs",
       "types": "./types/index.d.ts"
     },
-    "./*.m": {
+    "./*": {
       "import": "./dist/*.js",
       "require": "./dist/*.cjs",
-      "types": "./types/*.d.ts"
+      "types": "./dist/*.d.ts"
     },
     "./index": null
   },
@@ -36,9 +36,7 @@
   "author": "Eric Crowell <eric@do-ob.io> (https://do-ob.io)",
   "license": "MIT",
   "scripts": {
-    "build": "pnpm run build:dist && pnpm run build:types",
-    "build:dist": "vite build --mode production",
-    "build:types": "tsc -p tsconfig.build.json"
+    "build": "vite build --mode production"
   },
   "dependencies": {
     "@do-ob/crypto": "workspace:*"

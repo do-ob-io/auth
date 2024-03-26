@@ -1,7 +1,7 @@
 import {
   asym,
   hash,
-  key,
+  smith,
   sym,
   token,
   session,
@@ -10,7 +10,7 @@ import {
 export {
   asym,
   hash,
-  key,
+  smith,
   sym,
   token,
   session,

@@ -1,8 +1,8 @@
 import { test, expect } from 'vitest';
-import * as asym from './asym.js';
+import * as asym from './asym.ts';
 import {
   exporter, importer, unwrap, wrap,
-} from './key.js';
+} from './smith.ts';
 
 test('should wrap and unwrap key to verify signature', async () => {
   const data = 'hello world';

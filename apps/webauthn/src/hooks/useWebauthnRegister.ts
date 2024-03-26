@@ -66,6 +66,7 @@ export function useWebauthnRegister({
   // },
 }: UseWebauthnRegisterOptions) {
   const register = async () => {
+  
     const challenge = await random.chars(32);
     const userId = await window.crypto.randomUUID();
     const credential = await navigator.credentials.create({
@@ -73,7 +74,7 @@ export function useWebauthnRegister({
         challenge: Uint8Array.from(challenge, (c) => c.charCodeAt(0)),
         rp: {
           id: 'localhost',
-          name: 'Local Host',
+          name: 'Local Host', 
         },
         user: {
           id: Uint8Array.from(userId, (c) => c.charCodeAt(0)),

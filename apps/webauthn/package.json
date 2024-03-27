@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@do-ob/auth": "workspace:*",
     "@do-ob/crypto": "workspace:*"
   }
 }

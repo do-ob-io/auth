@@ -36,9 +36,11 @@
   "author": "Eric Crowell <eric@do-ob.io> (https://do-ob.io)",
   "license": "MIT",
   "scripts": {
+    "test": "vitest --run",
     "build": "vite build --mode production"
   },
   "dependencies": {
+    "@do-ob/auth": "workspace:*",
     "@do-ob/crypto": "workspace:*"
   }
 }

@@ -1,5 +1,5 @@
 // import React from 'react';
-import { random } from '@do-ob/crypto/encode';
+import { client } from '@do-ob/auth';
 
 export type RegisterRequest = {
   origin: string;
@@ -48,48 +48,16 @@ export type UseWebauthnRegisterOptions = {
 
 export function useWebauthnRegister({
   username,
-  // urlChallenge = 'http://localhost:3000/challenge',
-  // urlRegister = 'http://localhost:3000/register',
-  // fetchChallenge = async (url) => {
-  //   const response = await fetch(url);
-  //   return await response.text();
-  // },
-  // fetchRegister = async (url, body) => {
-  //   const response = await fetch(url, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(body),
-  //   });
-  //   return await response.text();
-  // },
 }: UseWebauthnRegisterOptions) {
   const register = async () => {
-  
-    const challenge = await random.chars(32);
-    const userId = await window.crypto.randomUUID();
-    const credential = await navigator.credentials.create({
-      publicKey: {
-        challenge: Uint8Array.from(challenge, (c) => c.charCodeAt(0)),
-        rp: {
-          id: 'localhost',
-          name: 'Local Host', 
-        },
-        user: {
-          id: Uint8Array.from(userId, (c) => c.charCodeAt(0)),
-          name: username,
-          displayName: username,
-        },
-        pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-        authenticatorSelection: {
-          userVerification: 'preferred',
-        },
-        attestation: 'none',
-      }
+
+    const registration = client.webauthn.register({
+      username,
+      challenge: 'test',
     });
 
-    console.log(credential);
+    console.log({ registration });
+    
   };
 
   return { register };

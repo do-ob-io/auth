@@ -1,7 +1,6 @@
 import { test, expect } from 'vitest';
 import * as asym from './asym.js';
-import { decode, sign, verify } from './token.js';
-import { token } from './index.ts';
+import { decode, sign, verify, TokenError } from './token.js';
 
 /**
  * Create a numeric date value. Needed typically for bearers.
@@ -62,7 +61,7 @@ test('should create a new json web token and NOT verify it with different privat
   const tokenSigned = await sign(payload, keyPair.privateKey);
   const tokenVerified = await verify(tokenSigned);
 
-  expect(tokenVerified).toEqual(token.TokenError.InvalidSignature);
+  expect(tokenVerified).toEqual(TokenError.InvalidSignature);
 });
 
 test('should create a new json web token and NOT verify it with different public key', async () => {
@@ -70,7 +69,7 @@ test('should create a new json web token and NOT verify it with different public
   const tokenSigned = await sign(payload);
   const tokenVerified = await verify(tokenSigned, keyPair.publicKey);
 
-  expect(tokenVerified).toEqual(token.TokenError.InvalidSignature);
+  expect(tokenVerified).toEqual(TokenError.InvalidSignature);
 });
 
 test('should create a new json web token, decode it, then verify the decoded data', async () => {

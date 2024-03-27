@@ -1,7 +1,7 @@
 /**
  * Types of authentication operations.
  */
-export type ClientDataType = 'webauthn.register' | 'webauthn.login' | 'ms-entra-id.register' | 'ms-entra-id.login';
+export type ClientDataType = 'webauthn.register' | 'webauthn.login';
 
 /**
  * Data obtained from a client application.
@@ -10,7 +10,7 @@ export interface ClientData {
   /**
    * The authenticator name.
    */
-  authenticator: 'webauthn' | 'ms-entra-id';
+  authenticator: 'webauthn';
 
   /**
    * The client's obtained nonce challenge string.

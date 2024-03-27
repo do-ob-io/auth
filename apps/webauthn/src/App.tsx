@@ -7,6 +7,16 @@ function App() {
     username: 'alice',
   });
 
+  const handleLogin = React.useCallback(async () => {
+    const credential = await navigator.credentials.get({
+      publicKey: {
+        challenge: new Uint8Array(32),
+        rpId: window.location.hostname,
+      } });
+
+    console.log({ credential });
+  }, []);
+
   const handleRegister = React.useCallback(async () => {
     const response = await register();
     console.log(response);
@@ -22,7 +32,7 @@ function App() {
         <button onClick={handleRegister}>
           Register
         </button>
-        <button onClick={() => {}}>
+        <button onClick={handleLogin}>
           Login
         </button>
       </div>

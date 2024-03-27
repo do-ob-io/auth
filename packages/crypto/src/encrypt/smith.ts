@@ -241,3 +241,67 @@ export async function importer(
     return undefined;
   }
 }
+
+/**
+ * Exporter for WebAuthn public keys.
+ */
+export async function exporterWebauthn(
+  key: CryptoKey,
+) {
+  const wc = await webcrypto();
+  const exported = await wc.subtle.exportKey('spki', key);
+  return base64.encode(exported);
+}
+
+/**
+ * Importer for WebAuthn public keys.
+ */
+export async function importerWebauthn(
+  /**
+   * The exported Subject Public Key Info obtained from a client's public key credential.
+   */
+  exported: ArrayBuffer | string,
+  /**
+   * The algorithm number. -7 = ECDSA with SHA-256, -257 = RSASSA-PKCS1-v1_5 with SHA-256.
+   * 
+   * Typically, the algorithm number is -7 for ECDSA with SHA-256.
+   * However, Windows Hello sometimes uses -257 for RSASSA-PKCS1-v1_5 with SHA-256.
+   */
+  algorithm: -7 | -257 | number = -7,
+) {
+  const wc = await webcrypto();
+
+  if(typeof exported === 'string') {
+    exported = base64.decode(exported).buffer;
+  }
+
+  /**
+   * Assign a algorithm EcKeyImportParams or RsaHashedImportParams object based on the algorithm number.
+   */
+  const algorithmParams = ((a) => {
+    switch (a) {
+    case -257:
+      return {
+        name: 'RSASSA-PKCS1-v1_5',
+        hash: 'SHA-256',
+      } as RsaHashedImportParams;
+    case -7:
+    default:
+      return {
+        name: 'ECDSA',
+        namedCurve: 'P-256',
+        hash: 'SHA-256',
+      } as EcKeyImportParams;
+    }
+  })(algorithm);
+
+  const key = await wc.subtle.importKey(
+    'spki',
+    exported,
+    algorithmParams,
+    true,
+    ['verify'],
+  );
+
+  return key;
+}

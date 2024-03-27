@@ -2,6 +2,8 @@ let webcryptoInstance: Crypto | undefined;
 
 /**
  * Get the crypto instance for the current environment.
+ * 
+ * There is no support for React Native yet.
  */
 export const webcrypto = async (): Promise<Crypto> => {
   if (!webcryptoInstance) {

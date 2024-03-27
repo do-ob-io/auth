@@ -1,5 +1,6 @@
 import { Credential } from './credential.ts';
 import { ClientData } from './clientData.ts';
+import { Authenticator } from './authenticator.ts';
 
 export interface RegistrationOptions {
   /**
@@ -45,6 +46,11 @@ export interface RegistrationEncoded extends RegistrationBase {
    * Base64 encoded client data.
    */
   clientData: string;
+
+  /**
+   * Base64 encoded authenticator data.
+   */
+  authenticator: string;
 }
 
 export interface RegistrationDecoded extends RegistrationBase {
@@ -62,6 +68,11 @@ export interface RegistrationDecoded extends RegistrationBase {
    * The client data.
    */
   clientData: ClientData;
+
+  /**
+   * Authenticator data.
+   */
+  authenticator: Authenticator;
 }
 
 /**

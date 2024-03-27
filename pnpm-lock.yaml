@@ -65,12 +65,18 @@ importers:
 
   apps/webauthn:
     dependencies:
+      '@do-ob/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@do-ob/crypto':
         specifier: workspace:*
         version: link:../../packages/crypto
 
   packages/auth:
     dependencies:
+      '@do-ob/auth':
+        specifier: workspace:*
+        version: 'link:'
       '@do-ob/crypto':
         specifier: workspace:*
         version: link:../crypto

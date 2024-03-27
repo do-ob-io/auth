@@ -51,7 +51,7 @@ The library includes a set of modules that can be used to encode and decode data
 Encode strings to and from base64.
 
 ```typescript
-import { base64 } from '@do-ob/crypto/encode';
+import { base64 } from '@do-ob/crypto';
 
 // Encode strings to base64
 const encoded = base64.encode('Hello, World!');
@@ -67,7 +67,7 @@ const decoded = base64.decode(encoded);
 Encode a JSON object to and from base64. JSON encodings are unpadded.
 
 ```typescript
-import { base64 } from '@do-ob/crypto/encode';
+import { base64 } from '@do-ob/crypto';
 
 const obj = { hello: 'world' };
 
@@ -84,7 +84,7 @@ const decoded = base64.decodeJson(encoded);
 Generate random base64 encoded string of a given length.
 
 ```typescript
-import { random } from '@do-ob/crypto/encode';
+import { random } from '@do-ob/crypto';
 
 // Generates an encoded string of 32 characters.
 const challenge = random.chars(32);
@@ -101,7 +101,7 @@ Hash data using the default SHA-256.
 You can optionally select the following algorithms: `SHA-1` (for non-crypto applications), `SHA-256`, `SHA-384`, or `SHA-512`.
 
 ```typescript
-import { hash } from '@do-ob/crypto/encrypt';
+import { hash } from '@do-ob/crypto';
 
 // Hash a string using SHA-256
 const hashed = await hash('Hello, World!');
@@ -115,7 +115,7 @@ const hashed = await hash('Hello, World!', 'SHA-512');
 Encrypt and decrypt data using AES-GCM (256).
 
 ```typescript
-import { sym } from '@do-ob/crypto/encrypt';
+import { sym } from '@do-ob/crypto';
 
 // Generate a new key.
 const key = await sym.generate();
@@ -145,7 +145,7 @@ const decrypted = await sym.decrypt(encrypted, key);
 Encrypt and decrypt data using RSA-OAEP (4096).
 
 ```typescript
-import { asym } from '@do-ob/crypto/encrypt';
+import { asym } from '@do-ob/crypto';
 
 // Generate a new key pair for encryption and decryption.
 const encryptorKeyPair = await asym.generate('encryptor');
@@ -175,7 +175,7 @@ const decrypted = await asym.decrypt(encrypted, encryptorKeyPair.privateKey);
 Sign and verify data using ECDSA + P-256 + SHA-256.
 
 ```typescript
-import { asym } from '@do-ob/crypto/encrypt';
+import { asym } from '@do-ob/crypto';
 
 // Generate a new key pair for signing and verification.
 const signerKeyPair = await asym.generate('signer');
@@ -202,12 +202,12 @@ const verified = await asym.verify('Hello, World!', signature, signerKeyPair.pub
 
 ### Key Management
 
-The library includes a key management module that can be used to export or wrap keys.
+This module can be used to export or wrap keys.
 
-#### Exporting and Importing Keys
+#### Using Smith to Export and Import Keys
 
 ```typescript
-import { key } from '@do-ob/crypto/encrypt';
+import { smith } from '@do-ob/crypto';
 
 // Generate a new symetric key.
 const newSymKey = await sym.generate();
@@ -217,20 +217,35 @@ const newAsymEncryptorKey = await asym.generate('encryptor');
 const newAsymSignerKey = await asym.generate('signer');
 
 // Export the keys, returning a base64 encoded JWK (a string).
-const jwkSym = await key.export(newSymKey, 'symEncryptor');
-const jwkAsymEncryptor = await key.export(newAsymEncryptorKey, 'asymEncryptor');
-const jwkAsymSigner = await key.export(newAsymSignerKey, 'asymSigner');
+const jwkSym = await smith.export(newSymKey, 'symEncryptor');
+const jwkAsymEncryptor = await smith.export(newAsymEncryptorKey, 'asymEncryptor');
+const jwkAsymSigner = await smith.export(newAsymSignerKey, 'asymSigner');
 
 // Import the keys back into a CryptoKey object.
-const importedSymKey = await key.import(jwkSym);
-const importedAsymEncryptorKey = await key.import(jwkAsymEncryptor);
-const importedAsymSignerKey = await key.import(jwkAsymSigner);
+const importedSymKey = await smith.import(jwkSym);
+const importedAsymEncryptorKey = await smith.import(jwkAsymEncryptor);
+const importedAsymSignerKey = await smith.import(jwkAsymSigner);
 ```
 
-#### Wrapping and Unwrapping Keys
+Import keys obtained from a [CredentialsContainer](https://developer.mozilla.org/en-US/docs/Web/API/CredentialsContainer) while using the [Web Authentication API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API).
 
 ```typescript
-import { key } from '@do-ob/crypto/encrypt';
+import { smith } from '@do-ob/crypto';
+
+// Get the public key from the Web Authentication API.
+const credential = await navigator.credentials.create({ publicKey: { /** Public Key Credential Options... **/ } });
+
+const publicKeyBuffer = credential.response.getPublicKey(); // SPKI ArrayBuffer
+const publicKeyAlgorithm = credential.response.getPublicKeyAlgorithm(); // -7 or -257
+
+// Imports the public key into a CryptoKey object whcih can now be used to verify signatures.
+const publicKey = await smith.importWebauthn(publicKeyBuffer, publicKeyAlgorithm);
+```
+
+#### Using Smith to Wrap and Unwrap Keys
+
+```typescript
+import { smith } from '@do-ob/crypto';
 
 // Generate a new symetric key.
 const newSymKey = await sym.generate();
@@ -240,22 +255,22 @@ const newAsymEncryptorKey = await asym.generate('encryptor');
 const newAsymSignerKey = await asym.generate('signer');
 
 // Wrap the keys with a password, returning a base64 encoded JWK (a string).
-const wrappedSymKey = await key.wrap(newSymKey, 'MyPassword', 'symEncryptor');
-const wrappedAsymEncryptorKey = await key.wrap(newAsymEncryptorKey, 'MyPassword', 'asymEncryptor');
-const wrappedAsymSignerKey = await key.wrap(newAsymSignerKey, 'MyPassword', 'asymSigner');
+const wrappedSymKey = await smith.wrap(newSymKey, 'MyPassword', 'symEncryptor');
+const wrappedAsymEncryptorKey = await smith.wrap(newAsymEncryptorKey, 'MyPassword', 'asymEncryptor');
+const wrappedAsymSignerKey = await smith.wrap(newAsymSignerKey, 'MyPassword', 'asymSigner');
 
 // Unwrap the keys with the password.
-const unwrappedSymKey = await key.unwrap(wrappedSym, 'MyPassword');
-const unwrappedAsymEncryptorKey = await key.unwrap(wrappedAsymEncryptorKey, 'MyPassword');
-const unwrappedAsymSignerKey = await key.unwrap(wrappedAsymSignerKey, 'MyPassword');
+const unwrappedSymKey = await smith.unwrap(wrappedSym, 'MyPassword');
+const unwrappedAsymEncryptorKey = await smith.unwrap(wrappedAsymEncryptorKey, 'MyPassword');
+const unwrappedAsymSignerKey = await smith.unwrap(wrappedAsymSignerKey, 'MyPassword');
 ```
 
 ### JWT Tokens
 
-The library includes a module that can be used to create and verify JWT tokens.
+This module can be used to create and verify JWT tokens.
 
 ```typescript
-import { token } from '@do-ob/crypto/encrypt';
+import { token } from '@do-ob/crypto';
 
 // Generate a new asymetric key pair for signing and verification.
 const signerKeyPair = await asym.generate('signer');
@@ -305,12 +320,12 @@ const decoded = token.decode(jwt);
 
 ### Sessions
 
-The library includes a module that can be used to create and verify session encryptions.
+This module can be used to create and verify session encryptions.
 
 For the web, these sessions should only be stored in a secure HttpOnly cookie.
 
 ```typescript
-import { session } from '@do-ob/crypto/encrypt';
+import { session } from '@do-ob/crypto';
 
 // Generate a new symetric key.
 const newSymKey = await sym.generate();

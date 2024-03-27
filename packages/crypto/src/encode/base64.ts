@@ -5,12 +5,12 @@ const textDecoder = new TextDecoder();
 /**
  * Converts a Uint8Array Buffer to a Base64 String.
  */
-export const encode = (input: Uint8Array | string, unpad = false): string => {
+export const encode = (input: ArrayBuffer | Uint8Array | string, unpad = false): string => {
   let u8: Uint8Array;
   if (typeof input === 'string') {
     u8 = textEncoder.encode(input);
   } else {
-    u8 = input;
+    u8 = new Uint8Array(input);
   }
   if (typeof window === 'undefined') {
     const value = Buffer.from(u8).toString('base64');

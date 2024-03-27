@@ -1,5 +1,3 @@
-import { base64 } from '@do-ob/crypto/encode';
+import * as client from '@do-ob/auth/client';
 
-export const Auth: Record<string, string> = {
-  encoded: base64.encode('auth'),
-};
+export { client };

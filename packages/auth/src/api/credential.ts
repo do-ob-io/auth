@@ -7,17 +7,22 @@ export interface CredentialBase {
   /**
    * The credential's type.
    */
-  type: 'public-key' | 'ms-entra-id';
+  type: 'public-key';
 
   /**
    * Base64 encoded public key.
    */
-  publicKey?: string;
+  publicKey: string;
 
   /**
    * The credential's algorithm.
    */
-  algorithm?: number;
+  algorithm: number;
+
+  /**
+   * Optional credential password.
+   */
+  password?: string;
 }
 
 export interface CredentialPublicKeyEncoded extends Omit<CredentialBase, 'publicKey'> {
@@ -39,7 +44,7 @@ export interface CredentialPublicKeyEncoded extends Omit<CredentialBase, 'public
   /**
    * The credential's algorithm.
    */
-  algorithm: -7;
+  algorithm: -7 | -257 | number;
 } 
 
 export interface CredentialPublicKeyDecoded extends Omit<CredentialBase, 'publicKey'> {
@@ -61,20 +66,10 @@ export interface CredentialPublicKeyDecoded extends Omit<CredentialBase, 'public
   /**
    * The credential's algorithm.
    */
-  algorithm: -7;
+  algorithm: -7 | -257 | number;
 }
 
 /**
  * A credential object.
  */
 export type Credential = CredentialBase | CredentialPublicKeyEncoded | CredentialPublicKeyDecoded;
-
-
-const credential: Credential = {
-  id: 'credential-id',
-  type: 'ms-entra-id',
-  publicKey: 'public-key',
-  algorithm: -7,
-};
-
-console.log(credential);

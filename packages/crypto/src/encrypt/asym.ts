@@ -11,7 +11,7 @@ let asymKeyPairSigner: CryptoKeyPair | undefined;
 /**
  * Generate a new RSA Key Pair
  */
-export async function generate(type: CryptoAsymType): Promise<CryptoKeyPair> {
+export async function generate(type: CryptoAsymType, extractable = true): Promise<CryptoKeyPair> {
   const wc = await webcrypto();
 
   if (type === 'encryptor') {
@@ -22,7 +22,7 @@ export async function generate(type: CryptoAsymType): Promise<CryptoKeyPair> {
         publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
         hash: 'SHA-256',
       },
-      true,
+      extractable,
       ['encrypt', 'decrypt'],
     );
 
@@ -38,7 +38,7 @@ export async function generate(type: CryptoAsymType): Promise<CryptoKeyPair> {
       namedCurve: 'P-256',
       hash: { name: 'SHA-256' },
     },
-    true,
+    extractable,
     ['sign', 'verify'],
   );
 
@@ -156,6 +156,40 @@ export async function verify(
       signature,
       unit8,
     );
+    return result;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Verifies data with the associated signature with keys exported from WebAuthn 
+ */
+export async function verifyWebauthn(
+  data: string,
+  signature: ArrayBuffer,
+  publicKey: CryptoKey,
+) {
+  const wc = await webcrypto();
+  const unit8 = new TextEncoder().encode(data);
+  try {
+    if (publicKey.algorithm.name === 'RSASSA-PKCS1-v1_5') {
+      const result = await wc.subtle.verify(
+        'RSASSA-PKCS1-v1_5',
+        publicKey,
+        signature,
+        unit8,
+      );
+      return result;
+    }
+
+    const result = await wc.subtle.verify(
+      { name: 'ECDSA', hash: { name: 'SHA-256' } },
+      publicKey,
+      signature,
+      unit8,
+    );
+
     return result;
   } catch (error) {
     return false;

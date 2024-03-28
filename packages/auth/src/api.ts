@@ -7,6 +7,7 @@ import {
 
 import {
   Authenticator,
+  AuthenticatorFlags,
 } from './api/authenticator.ts';
 
 import {
@@ -19,14 +20,25 @@ import {
   ClientData,
 } from './api/clientData.ts';
 
+import {
+  Passkey,
+} from './api/passkey.ts';
+
+import {
+  Challenge
+} from './api/challenge.ts';
+
 export type {
   RegistrationOptions,
   Registration,
   RegistrationDecoded,
   RegistrationEncoded,
   Authenticator,
+  AuthenticatorFlags,
   Credential,
   CredentialPublicKeyDecoded,
   CredentialPublicKeyEncoded,
   ClientData,
+  Passkey,
+  Challenge,
 };

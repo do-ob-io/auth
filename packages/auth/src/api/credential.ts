@@ -18,11 +18,6 @@ export interface CredentialBase {
    * The credential's algorithm.
    */
   algorithm: number;
-
-  /**
-   * Optional credential password.
-   */
-  password?: string;
 }
 
 export interface CredentialPublicKeyEncoded extends Omit<CredentialBase, 'publicKey'> {
@@ -72,4 +67,4 @@ export interface CredentialPublicKeyDecoded extends Omit<CredentialBase, 'public
 /**
  * A credential object.
  */
-export type Credential = CredentialBase | CredentialPublicKeyEncoded | CredentialPublicKeyDecoded;
+export type Credential = CredentialPublicKeyEncoded | CredentialPublicKeyDecoded;

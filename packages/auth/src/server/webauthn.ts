@@ -41,13 +41,20 @@ export interface InitiateOptions {
 }
 
 /**
+ * Returns an array of all challenge objects in the map.
+ */
+export function challenges() {
+  return Array.from(challangeMap.values());
+}
+
+/**
  * Initializes the WebAuthn registration or login process
  * by creating and storaging a challenge.
  */
 export async function initiate({
   request,
   expires = 60000,
-}: InitiateOptions): Promise<Challenge> {
+}: InitiateOptions): Promise<string> {
   cleanup(); // Clean up expired challenges if needed.
 
   const challenge: Challenge = {
@@ -58,7 +65,7 @@ export async function initiate({
 
   challangeMap.set(challenge.id, challenge);
 
-  return challenge;
+  return challenge.id;
 }
 
 /**
@@ -85,8 +92,9 @@ export async function register(registration: Registration) {
 
   // Check the challenge.
   const challenge = challangeMap.get(clientData.challenge);
+
   if (!challenge) {
-    throw new Error('Invalid challenge');
+    throw new Error('Invalid challenge (has it expired?)');
   }
 
   // Check the challenge purpose.
@@ -106,6 +114,9 @@ export async function register(registration: Registration) {
     clientData,
     authenticator,
   };
+
+  // Clean up the specific challenge so it can't be used again.
+  challangeMap.delete(clientData.challenge);
 
   return result;
 }

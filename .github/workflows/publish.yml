@@ -1,0 +1,75 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        type: boolean
+        description: 'Confirm Manual Publish'
+        default: false
+        required: true
+      access:
+        type: string
+        description: 'Publish Access'
+        default: 'public'
+        required: false
+      tag:
+        type: string
+        description: 'Publish Tag'
+        default: 'latest'
+        required: false
+  
+  workflow_call:
+    inputs:
+      access:
+        type: string
+        description: 'Publish Access'
+        default: 'public'
+        required: false
+      tag:
+        type: string
+        description: 'Publish Tag'
+        default: 'latest'
+        required: false
+    
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    name: Build and Publish
+    if: ${{ github.event_name != 'workflow_dispatch' || (github.event.inputs.confirm == true || github.event.inputs.confirm == 'true') }}
+
+    steps:
+
+    - name: Checkout Respository
+      uses: actions/checkout@v4
+
+    - uses: pnpm/action-setup@v2
+      with:
+        version: latest
+
+    - name: Setup NodeJS with PNPM Caching
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'lts'
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@do-ob'
+        cache: 'pnpm'
+
+    - name: Install NodeJS Dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build Projects
+      run: pnpm build
+
+    - name: Publish Project (Dispatched)
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: pnpm publish -r --tag ${{ github.event.inputs.tag }} --access ${{ github.event.inputs.access }}
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Publish Project (Called)
+      if: ${{ github.event_name != 'workflow_dispatch' }}
+      run: pnpm publish -r --tag ${{ inputs.tag }} --access ${{ inputs.access }}
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

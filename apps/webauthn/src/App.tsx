@@ -3,9 +3,9 @@ import { useWebauthnRegister } from './hooks/useWebauthnRegister.ts';
 import './App.css';
 
 function App() {
-  const { register } = useWebauthnRegister({
-    username: 'alice',
-  });
+  const [username, setUsername] = React.useState('');
+
+  const { register } = useWebauthnRegister();
 
   const handleLogin = React.useCallback(async () => {
     const credential = await navigator.credentials.get({
@@ -18,15 +18,17 @@ function App() {
   }, []);
 
   const handleRegister = React.useCallback(async () => {
-    const response = await register();
+    const response = await register(username);
     console.log(response);
-  }, [register]);
+  }, [register, username]);
 
   return (
     <>
       <h1>Authenticate</h1>
       <div className="card">
-        <input type="text" placeholder="Username" />
+        <input type="text" placeholder="Username" onChange={
+          (event) => setUsername(event.target.value)
+        } />
       </div>
       <div className="card" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '1em'}}>
         <button onClick={handleRegister}>

@@ -1,5 +1,7 @@
 // import React from 'react';
-import { client } from '@do-ob/auth';
+import { client, server } from '@do-ob/auth';
+import { base64 } from '@do-ob/crypto/encode';
+import { getCborDecode } from '@do-ob/auth/cbor';
 
 export type RegisterRequest = {
   origin: string;
@@ -21,11 +23,6 @@ export type RegisterFetch = (url: string, body: RegisterRequest) => Promise<Regi
 
 export type UseWebauthnRegisterOptions = {
   /**
-   * The username to register.
-   */
-  username: string;
-
-  /**
    * The URL to fetch the challenge.
    */
   urlChallenge?: string;
@@ -46,17 +43,26 @@ export type UseWebauthnRegisterOptions = {
   fetchRegister?: RegisterFetch;
 };
 
-export function useWebauthnRegister({
-  username,
-}: UseWebauthnRegisterOptions) {
-  const register = async () => {
+export function useWebauthnRegister() {
+  const register = async (username: string) => {
 
-    const registration = client.webauthn.register({
+    const challenge = await server.webauthn.initiate({ request: 'webauthn.register' });
+
+    const registrationEncoded = await client.webauthn.register({
       username,
-      challenge: 'test',
+      challenge: challenge,
     });
 
-    console.log({ registration });
+    const registrationDecoded = await server.webauthn.register(registrationEncoded);
+
+    const attestation = registrationDecoded.authenticator.attestation;
+
+    if (attestation) {
+      const cborDecode = await getCborDecode();
+      const attestationObject = cborDecode(base64.encodeBuffer(attestation));
+      console.log({attestationObject});
+    }
+    
     
   };
 

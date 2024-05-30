@@ -7,7 +7,8 @@
     "apps:webauthn": "pnpm --filter './apps/webauthn' dev",
     "lint": "pnpm --filter './packages/**' lint",
     "test": "pnpm --filter './packages/**' test",
-    "build": "pnpm --filter './packages/**' build"
+    "build": "pnpm --filter './packages/**' build",
+    "build:auth": "pnpm --filter './packages/auth' build"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,8 @@
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "@vitest/browser": "^1.4.0",
+    "cbor": "^9.0.2",
+    "cbor-web": "^9.0.2",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",

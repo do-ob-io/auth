@@ -1,7 +1,6 @@
 // import type { RegistrationDecoded } from '@do-ob/auth/api';
 
 import { base64, hex, utf8, uuid } from '@do-ob/crypto';
-import { authenticators } from '@do-ob/auth/meta';
 import { Authenticator, RegistrationOptions, Registration, Credential, ClientData } from '@do-ob/auth/api';
 
 interface WebauthnClientData {
@@ -35,14 +34,11 @@ export async function parseAuthenticatorData(athenticatorData: ArrayBuffer) {
     aaguid = `${aaguid.substring(0, 8)}-${aaguid.substring(8, 12)}-${aaguid.substring(12, 16)}-${aaguid.substring(16, 20)}-${aaguid.substring(20)}`;
   }
 
-  const name = authenticators[aaguid] ?? 'Unknown';
-
   const result: Authenticator = {
     rpIdHash,
     flags,
     counter,
     aaguid,
-    name,
   };
 
   return result;
@@ -55,6 +51,7 @@ export async function register({
   username,
   challenge,
   origin,
+  attachment
 }: RegistrationOptions) {
 
   if (typeof window === 'undefined') {
@@ -72,7 +69,7 @@ export async function register({
    * Create the public key options.
    */
   const publicKeyOptions: PublicKeyCredentialCreationOptions = {
-    challenge: Uint8Array.from(challenge, (c) => c.charCodeAt(0)),
+    challenge: base64.encodeBuffer(challenge),
     rp: {
       id: origin ?? window.location.hostname,
       name: origin ?? window.location.hostname,
@@ -88,9 +85,9 @@ export async function register({
     ],
     authenticatorSelection: {
       userVerification: 'required',
-      authenticatorAttachment: canLocalAuth ? 'platform' : 'cross-platform',
-      residentKey: 'preferred',
-      requireResidentKey: false,
+      authenticatorAttachment: attachment ?? canLocalAuth ? 'platform' : 'cross-platform',
+      residentKey: 'required',
+      requireResidentKey: true,
     },
     attestation: 'direct',
   };
@@ -108,8 +105,10 @@ export async function register({
 
   /**
    * Store the credential.
+   * 
+   * TODO: Getting the error: "Store operation is not permitted for this credential type."
    */
-  navigator.credentials.store(pkCredential);
+  // navigator.credentials.store(pkCredential);
 
   /**
    * Get the response casted as an AuthenticatorAttestationResponse.
@@ -120,6 +119,7 @@ export async function register({
    * Extract credential response information.
    */
   const authenticator = await parseAuthenticatorData(response.getAuthenticatorData());
+  authenticator.attestation = base64.encode(response.attestationObject);
   const publicKey = base64.encode(response.getPublicKey());
   const algorithm = response.getPublicKeyAlgorithm();
   const webauthnClientData = utf8.decodeJson<WebauthnClientData>(response.clientDataJSON);

@@ -74,7 +74,22 @@ export interface Authenticator {
   aaguid: string;
 
   /**
-   * The name of the authenticator.
+   * The attestation data as base64 string, if present.
    */
-  name: string;
+  attestation?: string;
+}
+
+/**
+ * Attestation data interface
+ */
+export interface Attestation {
+  /**
+   * The attestation statement format identifier.
+   */
+  fmt: string;
+
+  /**
+   * The attestation statement as base64 string.
+   */
+  attStmt: string;
 }

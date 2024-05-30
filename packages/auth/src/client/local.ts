@@ -66,12 +66,6 @@ export async function register({
     memoryDb.insert(passkey);
   }
 
-  let name = 'Web Cryptography API';
-
-  if (typeof window !== 'undefined') {
-    name = window.navigator.userAgent;
-  }
-
   const credential: Credential = {
     id,
     type: 'public-key',
@@ -92,7 +86,6 @@ export async function register({
     flags: 0,
     counter: 0,
     aaguid: '00000000-0000-0000-0000-000000000000',
-    name,
   };
 
   const registration: Registration = {
@@ -141,8 +134,8 @@ export const memoryDb = {
   },
 
   /**
- * Clear the memory container.
- */
+   * Clear the memory container.
+   */
   async clear() {
     passkeys = [];
   },

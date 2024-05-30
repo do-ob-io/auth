@@ -43,5 +43,17 @@
   "dependencies": {
     "@do-ob/auth": "workspace:*",
     "@do-ob/crypto": "workspace:*"
+  },
+  "peerDependencies": {
+    "cbor": "^9.0.2",
+    "cbor-web": "^9.0.2"
+  },
+  "peerDependenciesMeta": {
+    "cbor": {
+      "optional": true
+    },
+    "cbor-web": {
+      "optional": true
+    }
   }
 }

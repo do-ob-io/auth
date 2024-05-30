@@ -17,6 +17,11 @@ export interface RegistrationOptions {
    * Hostname origin of the client.
    */
   origin?: string;
+
+  /**
+   * The preferred authenticator attachment.
+   */
+  attachment?: AuthenticatorAttachment;
 }
 
 export interface RegistrationBase {

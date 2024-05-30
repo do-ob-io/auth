@@ -89,7 +89,7 @@ export async function register({
       residentKey: 'required',
       requireResidentKey: true,
     },
-    attestation: 'direct',
+    attestation: 'direct'
   };
 
   /**

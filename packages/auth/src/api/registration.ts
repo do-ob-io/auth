@@ -4,12 +4,12 @@ import { Authenticator } from './authenticator.ts';
 
 export interface RegistrationOptions {
   /**
-   * The username of the user.
+   * The username of the user. This will be the name of the user's passkey on their device.
    */
   username: string;
 
   /**
-   * The challenge from the server.
+   * The one-time nonce challenge from the server.
    */
   challenge: string;
 
@@ -19,9 +19,22 @@ export interface RegistrationOptions {
   origin?: string;
 
   /**
-   * The preferred authenticator attachment.
+   * The preferred authenticator attachment. If not set, the authenticator will perfer 'platform' if the device is capable.
+   * 
+   * 'platform' - The authenticator is attached to the platform without a sperate external device.
+   * 'cross-platform' - The authenticator is attached to a separate external device (via USB, Bluetooth, etc).
+   * 
+   * @default undefined
    */
   attachment?: AuthenticatorAttachment;
+
+  /**
+   * Should the server attempt attestations?
+   * That is, verify the authenticity of the authenticator.
+   * 
+   * @default false
+   */
+  attest?: boolean;
 }
 
 export interface RegistrationBase {

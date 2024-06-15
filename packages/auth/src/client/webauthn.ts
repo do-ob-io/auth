@@ -1,6 +1,6 @@
 // import type { RegistrationDecoded } from '@do-ob/auth/api';
 
-import { base64, hex, utf8, uuid } from '@do-ob/crypto';
+import { base64, hex, utf8 } from '@do-ob/crypto';
 import { Authenticator, RegistrationOptions, Registration, Credential, ClientData } from '@do-ob/auth/api';
 
 interface WebauthnClientData {
@@ -51,7 +51,8 @@ export async function register({
   username,
   challenge,
   origin,
-  attachment
+  attachment,
+  attest = false,
 }: RegistrationOptions) {
 
   if (typeof window === 'undefined') {
@@ -59,11 +60,6 @@ export async function register({
   }
     
   const canLocalAuth = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-
-  /**
-   * Generate a random user ID.
-   */
-  const userId = await uuid();
 
   /**
    * Create the public key options.
@@ -75,7 +71,7 @@ export async function register({
       name: origin ?? window.location.hostname,
     },
     user: {
-      id: Uint8Array.from(userId, (c) => c.charCodeAt(0)),
+      id: base64.encodeBuffer(username),
       name: username,
       displayName: username,
     },
@@ -89,7 +85,7 @@ export async function register({
       residentKey: 'required',
       requireResidentKey: true,
     },
-    attestation: 'direct'
+    attestation: attest ? 'none' : 'direct'
   };
 
   /**

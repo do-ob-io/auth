@@ -1,7 +1,7 @@
 {
   "name": "@do-ob/auth",
   "version": "0.0.0",
-  "description": "Authentication (authn) and authorization (authz) library",
+  "description": "Simple webauthn authentication (authn) library",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -28,10 +28,8 @@
     "library",
     "esm",
     "authn",
-    "authz",
     "webauthn",
-    "authentication",
-    "authorization"
+    "authentication"
   ],
   "author": "Eric Crowell <eric@do-ob.io> (https://do-ob.io)",
   "license": "MIT",
@@ -41,7 +39,6 @@
     "build": "vite build --mode production"
   },
   "dependencies": {
-    "@do-ob/auth": "workspace:*",
     "@do-ob/crypto": "workspace:*"
   },
   "peerDependencies": {
